@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import Base
-from src.models.constance import PATH_STR_LEN, NAME_STR_LEN
+from models.base import Base
+from models.constance import PATH_STR_LEN, NAME_STR_LEN
 
 
 class PlaceOfInterest(Base):
@@ -32,7 +32,7 @@ class Description(Base):
     desc_path: Mapped[str] = mapped_column(String(PATH_STR_LEN), nullable=False, unique=True)
     place_of_interest_id: Mapped[UUID] = mapped_column(ForeignKey('placeofinterest.id'))
     audio: Mapped['Audio'] = relationship(back_populates='description')
-    place_of_interest: Mapped['PlaceOfInterest'] = relationship('descriptions')
+    place_of_interest: Mapped['PlaceOfInterest'] = relationship(back_populates='descriptions')
 
     def __str__(self):
         return f'{__class__.__name__}({self.id}, {self.desc_path})'
