@@ -15,10 +15,8 @@ sqlite_url = f"sqlite:////Users/alena/PycharmProjects/text_to_audio/{sqlite_file
 
 # @asynccontextmanager
 def lifespan(_: FastAPI):
-    print(33333333)
     sqlite.engine = create_engine(sqlite_url)
     sqlite.session = sessionmaker(sqlite.engine, expire_on_commit=False)
-    print(11111, sqlite.session)
     yield
     sqlite.engine.dispose()
 

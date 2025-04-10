@@ -21,7 +21,7 @@ def retrieve_all(session: Session) -> list[CityRetrieveSchema]:
 def retrieve(session: Session, city_id: UUID) -> CityRetrieveSchema:
     """Получение информации о городе."""
 
-    city = city_repository.get(session, id=city_id)
+    city = city_repository.get(session, id=str(city_id))
 
     if city is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="City not found")
@@ -47,7 +47,7 @@ def create(session: Session, data: CityCreateSchema) -> CityRetrieveSchema:
 def delete(session: Session, city_id: UUID) -> None:
     """Удаление города."""
 
-    city = city_repository.get(session, id=city_id)
+    city = city_repository.get(session, id=str(city_id))
 
     if city is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="City not found")
@@ -63,7 +63,7 @@ def update(
 ) -> CityRetrieveSchema:
     """Изменение города."""
 
-    city = city_repository.get(session, id=city_id)
+    city = city_repository.get(session, id=str(city_id))
 
     if city is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="City not found")
