@@ -1,4 +1,5 @@
 from uuid import UUID
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -39,7 +40,7 @@ def create(session: Session, data: CityCreateSchema) -> CityRetrieveSchema:
             detail="City already exists"
         )
 
-    return city_repository.create(session, data={"name": data.name})
+    return city_repository.create(session, data={'id': str(uuid4()), 'name': data.name})
 
 
 @router.delete("/{city_id}", status_code=status.HTTP_204_NO_CONTENT)
