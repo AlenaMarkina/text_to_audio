@@ -10,7 +10,7 @@ from sqlalchemy.orm import (
     registry
 )
 
-from src.models.constance import ID_LEN
+from models.constance import ID_LEN
 
 mapper_registry = registry()
 
