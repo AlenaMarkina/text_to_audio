@@ -1,26 +1,20 @@
-# from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from settings.postgresql import settings as postgresql_settings
+from db import postgresql
 
 from api.v1.router import router
-from db import sqlite
 
 
-sqlite_file_name = "audio_guide.db3"
-sqlite_url = f"sqlite:////Users/alena/PycharmProjects/text_to_audio/{sqlite_file_name}"
-
-
-# @asynccontextmanager
-def lifespan(_: FastAPI):
-    print(33333333)
-    sqlite.engine = create_engine(sqlite_url)
-    sqlite.session = sessionmaker(sqlite.engine, expire_on_commit=False)
-    print(11111, sqlite.session)
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    postgresql.async_engine = create_async_engine(postgresql_settings.DSN, echo=postgresql_settings.LOG_QUERIES)
+    postgresql.async_session = async_sessionmaker(postgresql.async_engine, expire_on_commit=False)
     yield
-    sqlite.engine.dispose()
+    await postgresql.async_engine.dispose()
 
 
 app = FastAPI(
