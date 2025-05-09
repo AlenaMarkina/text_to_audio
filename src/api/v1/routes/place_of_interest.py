@@ -1,5 +1,4 @@
 from uuid import UUID
-from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -8,22 +7,23 @@ from api.v1.schemas.place_of_interest import (
     PlaceOfInterestCreateSchema, PlaceOfInterestUpdateSchema, PlaceOfInterestRetrieveSchema
 )
 from repository.place_of_interest import place_repository
+from repository.city import city_repository
 
 router = APIRouter()
 
 
 @router.get("/")
-def retrieve_all(session: Session) -> list[PlaceOfInterestRetrieveSchema]:
+async def retrieve_all(session: Session) -> list[PlaceOfInterestRetrieveSchema]:
     """Просмотр всех достопримечательностей."""
 
-    return place_repository.filter(session)
+    return await place_repository.filter(session)
 
 
 @router.get("/{place_id}")
-def retrieve(session: Session, place_id: UUID) -> PlaceOfInterestRetrieveSchema:
+async def retrieve(session: Session, place_id: UUID) -> PlaceOfInterestRetrieveSchema:
     """Получение информации о достопримечательности."""
 
-    place_of_interest = place_repository.get(session, id=str(place_id))
+    place_of_interest = await place_repository.get(session, id=place_id)
 
     if place_of_interest is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Place of interest not found")
@@ -32,9 +32,9 @@ def retrieve(session: Session, place_id: UUID) -> PlaceOfInterestRetrieveSchema:
 
 
 @router.post("/")
-def create(session: Session, data: PlaceOfInterestCreateSchema) -> PlaceOfInterestRetrieveSchema:
+async def create(session: Session, data: PlaceOfInterestCreateSchema) -> PlaceOfInterestRetrieveSchema:
     """Создание достопримечательности."""
-    is_exist = place_repository.exists(session, name=data.name)
+    is_exist = await place_repository.exists(session, name=data.name)
 
     if is_exist:
         raise HTTPException(
@@ -42,39 +42,47 @@ def create(session: Session, data: PlaceOfInterestCreateSchema) -> PlaceOfIntere
             detail="Place of interest already exists"
         )
 
-    data = {
-        'id': str(uuid4()),
-        'city_id': str(data.city_id),
-        'name': data.name}
+    is_city_exist = await city_repository.exists(session, id=data.city_id)
 
-    return place_repository.create(session, data=data)
+    if not is_city_exist:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="City with given id does not exist"
+        )
+
+    data = {
+        'city_id': data.city_id,
+        'name': data.name
+    }
+
+    return await place_repository.create(session, data=data)
 
 
 @router.delete("/{place_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(session: Session, place_id: UUID) -> None:
+async def delete(session: Session, place_id: UUID) -> None:
     """Удаление достопримечательности."""
 
-    place_of_interest = place_repository.get(session, id=str(place_id))
+    place_of_interest = await place_repository.get(session, id=place_id)
 
     if place_of_interest is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Place of interest not found")
 
-    place_repository.delete(session, place_of_interest)
+    await place_repository.delete(session, place_of_interest)
 
 
 @router.put("/{place_id}")
-def update(
+async def update(
     session: Session,
     data: PlaceOfInterestUpdateSchema,
     place_id: UUID,
 ) -> PlaceOfInterestRetrieveSchema:
     """Изменение достопримечательности."""
 
-    place_of_interest = place_repository.get(session, id=str(place_id))
+    place_of_interest = await place_repository.get(session, id=place_id)
 
     if place_of_interest is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Place of interest not found")
 
-    new_place = place_repository.update(session, place_of_interest, {"name": data.name})
+    data = {"name": data.name}
 
-    return new_place
+    return await place_repository.update(session, place_of_interest, data=data)

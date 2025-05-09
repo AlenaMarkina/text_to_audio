@@ -6,22 +6,23 @@ from fastapi import APIRouter, HTTPException, status
 from api.v1.deps.session import Session
 from api.v1.schemas.image import ImageCreateSchema, ImageRetrieveSchema, ImageUpdateSchema
 from repository.image import image_repository
+from repository.place_of_interest import place_repository
 
 router = APIRouter()
 
 
 @router.get("/")
-def retrieve_all(session: Session) -> list[ImageRetrieveSchema]:
+async def retrieve_all(session: Session) -> list[ImageRetrieveSchema]:
     """Просмотр всех фотографий с достопримечательностями."""
 
-    return image_repository.filter(session)
+    return await image_repository.filter(session)
 
 
 @router.get("/{image_id}")
-def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
+async def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
     """Получение информации о фотографии с достопримечательностью."""
 
-    image = image_repository.get(session, id=str(image_id))
+    image = await image_repository.get(session, id=image_id)
 
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
@@ -30,9 +31,9 @@ def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
 
 
 @router.post("/")
-def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSchema:
+async def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSchema:
     """Создание фотографии с достопримечательностью."""
-    is_exist = image_repository.exists(session, image_path=data.image_path)
+    is_exist = await image_repository.exists(session, path=data.path)
 
     if is_exist:
         raise HTTPException(
@@ -40,35 +41,43 @@ def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSchema:
             detail="Image already exists"
         )
 
-    data = {
-        'id': str(uuid4()),
-        'place_of_interest_id': str(data.place_of_interest_id),
-        'image_path': data.image_path}
+    is_place_exist = await place_repository.exists(session, id=data.place_of_interest_id)
 
-    return image_repository.create(session, data=data)
+    if not is_place_exist:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Place_of_interest with given id does not exist"
+        )
+
+    data = {
+        'place_of_interest_id': data.place_of_interest_id,
+        'path': data.path
+    }
+
+    return await image_repository.create(session, data=data)
 
 
 @router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(session: Session, image_id: UUID) -> None:
+async def delete(session: Session, image_id: UUID) -> None:
     """Удаление фотографии с достопримечательностью."""
 
-    image = image_repository.get(session, id=str(image_id))
+    image = await image_repository.get(session, id=image_id)
 
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
 
-    image_repository.delete(session, image)
+    await image_repository.delete(session, image)
 
 
 @router.put("/{image_id}")
-def update(session: Session, data: ImageUpdateSchema, image_id: UUID) -> ImageRetrieveSchema:
+async def update(session: Session, data: ImageUpdateSchema, image_id: UUID) -> ImageRetrieveSchema:
     """Изменение фотографии с достопримечательностью."""
 
-    image = image_repository.get(session, id=str(image_id))
+    image = await image_repository.get(session, id=image_id)
 
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
 
-    new_image = image_repository.update(session, image, {"image_path": data.image_path})
+    data = {"path": data.path}
 
-    return new_image
+    return await image_repository.update(session, image, data=data)

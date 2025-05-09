@@ -5,7 +5,7 @@ from api.v1.schemas.base import Base
 
 
 class DescriptionBaseSchema(Base):
-    desc_path: str
+    path: str
     place_of_interest_id: UUID
 
 
