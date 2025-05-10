@@ -50,9 +50,9 @@ def upgrade() -> None:
     sa.UniqueConstraint('path')
     )
     op.create_table('image',
-    sa.Column('path', sa.String(length=256), nullable=False),
-    sa.Column('place_of_interest_id', sa.Uuid(), nullable=False),
     sa.Column('id', sa.Uuid(), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('place_of_interest_id', sa.Uuid(), nullable=False),
+    sa.Column('path', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['place_of_interest_id'], ['placeofinterest.id'], ),

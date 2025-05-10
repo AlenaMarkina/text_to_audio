@@ -1,5 +1,6 @@
 import os.path
 import sys
+from pathlib import Path
 
 
 IMG_EXTENSION = '.jpg'
@@ -8,7 +9,14 @@ dir_name = sys.argv[1] if len(sys.argv) else None
 print(f'Renaming files in "{dir_name}" folder...')
 
 # start_dir = '../../statics/images'
-start_dir = '.'  # запуск в терминале
+# start_dir = '.'  # запуск в терминале
+root_dir = Path(__file__).resolve(strict=True).parent.parent.parent
+p = [path.as_posix() for path in root_dir.iterdir() if path.as_posix().endswith('/statics')][0]
+p1 = [d for d in os.listdir(p) if d == 'images'][0]
+start_dir = os.path.join(p, p1)
+
+print('-----------------------------')
+print(f'start_dir: {start_dir}')
 
 
 def find_directory_and_files(start_folder_path, folder_name) -> tuple[str, list] | None:
@@ -35,6 +43,8 @@ def get_new_file_name(path, files) -> list[str]:
 
 
 def main():
+    # TODO: сделать проверку, что искомая папка находится в папке images, тк может быть папка
+    #  с таким названием в другом месте. То есть сделать start_dir = images!!!!!!!
     try:
         full_path, files = find_directory_and_files(start_dir, dir_name)
         new_files_name = get_new_file_name(full_path, files)
@@ -51,7 +61,6 @@ def main():
             os.rename(i[0], i[1])
     except TypeError as err:
         print(err)
-
 
 
 main()

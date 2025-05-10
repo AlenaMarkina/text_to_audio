@@ -4,25 +4,21 @@ from fastapi import APIRouter, HTTPException, status
 
 from api.v1.deps.session import Session
 from api.v1.schemas.audio import AudioRetrieveSchema
-from repository.description import audio_repository
 from repository.audio import audio_repository
-from repository.place_of_interest import place_repository
-from repository.audio import audio_repository
-from services.convert_text_to_audio import TextConvertor
 
 router = APIRouter()
 
 
 @router.get("/")
 async def retrieve_all(session: Session) -> list[AudioRetrieveSchema]:
-    """Просмотр всех описаний к аудиозаписям."""
+    """Просмотр всех аудиозаписей."""
 
     return await audio_repository.filter(session)
 
 
 @router.get("/{audio_id}")
 async def retrieve(session: Session, audio_id: UUID) -> AudioRetrieveSchema:
-    """Получение информации об описании аудиозаписи."""
+    """Получение информации об аудиозаписи."""
 
     audio = await audio_repository.get(session, id=audio_id)
 
@@ -34,7 +30,7 @@ async def retrieve(session: Session, audio_id: UUID) -> AudioRetrieveSchema:
 
 @router.delete("/{audio_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(session: Session, audio_id: UUID) -> None:
-    """Удаление описания аудиозаписи."""
+    """Удаление аудиозаписи."""
 
     audio = await audio_repository.get(session, id=audio_id)
 
@@ -46,7 +42,7 @@ async def delete(session: Session, audio_id: UUID) -> None:
 
 # @router.put("/{audio_id}")
 # async def update(session: Session, data: DescriptionUpdateSchema, desc_id: UUID) -> DescriptionRetrieveSchema:
-#     """Изменение описания достопримечательности."""
+#     """Изменение аудиозаписи."""
 #
 #     description = await audio_repository.get(session, id=desc_id)
 #

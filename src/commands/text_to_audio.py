@@ -12,7 +12,8 @@ from docx import Document
 
 file = sys.argv[1] if len(sys.argv) else None
 
-ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent  # /Users/alena/PycharmProjects/text_to_audio
+
 print(1111, ROOT_DIR)
 
 

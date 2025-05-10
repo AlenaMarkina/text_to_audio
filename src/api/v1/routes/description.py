@@ -5,8 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from api.v1.deps.session import Session
 from api.v1.schemas.description import (
     DescriptionCreateSchema, DescriptionUpdateSchema, DescriptionRetrieveSchema)
-from repository.description import audio_repository
-from repository.audio import audio_repository
+from repository.description import desc_repository
 from repository.place_of_interest import place_repository
 from repository.audio import audio_repository
 from services.convert_text_to_audio import TextConvertor
@@ -18,14 +17,14 @@ router = APIRouter()
 async def retrieve_all(session: Session) -> list[DescriptionRetrieveSchema]:
     """Просмотр всех описаний к достопримечательностям."""
 
-    return await audio_repository.filter(session)
+    return await desc_repository.filter(session)
 
 
 @router.get("/{desc_id}")
 async def retrieve(session: Session, desc_id: UUID) -> DescriptionRetrieveSchema:
     """Получение информации об описании достопримечательности."""
 
-    description = await audio_repository.get(session, id=desc_id)
+    description = await desc_repository.get(session, id=desc_id)
 
     if description is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Description not found")
@@ -36,7 +35,10 @@ async def retrieve(session: Session, desc_id: UUID) -> DescriptionRetrieveSchema
 @router.post("/")
 async def create(session: Session, data: DescriptionCreateSchema) -> DescriptionRetrieveSchema:
     """Создание описания к достопримечательности."""
-    is_exist = await audio_repository.exists(session, path=data.path)
+    # TODO: Подумать как правильно обработать ошибку:
+    #  если описание создано, но при конвертации в аудио и ее сохр произошла ошибка.
+    #  Аудио в этом случае не сохр в папку и в бд. А при повторном запросе выдает ошибку 409!!!!!
+    is_exist = await desc_repository.exists(session, path=data.path)
 
     if is_exist:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Description already exists")
@@ -53,16 +55,14 @@ async def create(session: Session, data: DescriptionCreateSchema) -> Description
         'place_of_interest_id': data.place_of_interest_id,
         'path': data.path
     }
-    desc = await audio_repository.create(session, data=desc_data)
-    # desc = await desc_repository.get(session, path=desc_data.path)
+    desc = await desc_repository.create(session, data=desc_data)
 
-    # TODO: добавить автоматическую генерацию аудио и сохр ее в бд
-
-    convertor = TextConvertor(text_path=desc.path)  # "./statics/text/portugal/lisbon/st_georges_castle333.docx",
+    convertor = TextConvertor(text_path=desc.path)
     await convertor.init_voice()
     await convertor.set_audiopath_from_textpath()
     await convertor.read_text_file()
-    await convertor.convert_text_to_audio()
+    if not await convertor.convert_text_to_audio():
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
     audio_data = {
         'place_of_interest_id': data.place_of_interest_id,
@@ -77,25 +77,25 @@ async def create(session: Session, data: DescriptionCreateSchema) -> Description
 async def delete(session: Session, desc_id: UUID) -> None:
     """Удаление описания достопримечательностям."""
 
-    description = await audio_repository.get(session, id=desc_id)
+    description = await desc_repository.get(session, id=desc_id)
 
     if description is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Description not found")
 
-    await audio_repository.delete(session, description)
+    await desc_repository.delete(session, description)
 
 
 @router.put("/{desc_id}")
 async def update(session: Session, data: DescriptionUpdateSchema, desc_id: UUID) -> DescriptionRetrieveSchema:
     """Изменение описания достопримечательности."""
 
-    description = await audio_repository.get(session, id=desc_id)
+    description = await desc_repository.get(session, id=desc_id)
 
     if description is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Description not found")
 
-    data = {"desc_path": data.desc_path}
+    data = {"path": data.path}
 
-    return await audio_repository.update(session, description, data=data)
+    return await desc_repository.update(session, description, data=data)
 
     #TODO: добавить изменение в аудиозаписи!!!!!!!

@@ -6,4 +6,4 @@ class DescriptionRepository(SQLAlchemyRepository[Description]):
     pass
 
 
-audio_repository = DescriptionRepository(Description)
+desc_repository = DescriptionRepository(Description)

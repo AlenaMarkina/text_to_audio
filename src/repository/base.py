@@ -65,6 +65,7 @@ class SQLAlchemyRepository[T]:
     ) -> T:
         for key, value in data.items():
             setattr(obj, key, value)
+        await session.flush()
         await session.refresh(obj)
 
         if commit:

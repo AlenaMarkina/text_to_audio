@@ -13,14 +13,14 @@ router = APIRouter()
 
 @router.get("/")
 async def retrieve_all(session: Session) -> list[ImageRetrieveSchema]:
-    """Просмотр всех фотографий с достопримечательностями."""
+    """Просмотр всех фотографий к достопримечательностям."""
 
     return await image_repository.filter(session)
 
 
 @router.get("/{image_id}")
 async def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
-    """Получение информации о фотографии с достопримечательностью."""
+    """Получение информации о фотографии к достопримечательности."""
 
     image = await image_repository.get(session, id=image_id)
 
@@ -32,7 +32,7 @@ async def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
 
 @router.post("/")
 async def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSchema:
-    """Создание фотографии с достопримечательностью."""
+    """Создание фотографии к достопримечательности."""
     is_exist = await image_repository.exists(session, path=data.path)
 
     if is_exist:
@@ -59,7 +59,7 @@ async def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSche
 
 @router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(session: Session, image_id: UUID) -> None:
-    """Удаление фотографии с достопримечательностью."""
+    """Удаление фотографии к достопримечательности."""
 
     image = await image_repository.get(session, id=image_id)
 
@@ -71,7 +71,7 @@ async def delete(session: Session, image_id: UUID) -> None:
 
 @router.put("/{image_id}")
 async def update(session: Session, data: ImageUpdateSchema, image_id: UUID) -> ImageRetrieveSchema:
-    """Изменение фотографии с достопримечательностью."""
+    """Изменение фотографии к достопримечательности."""
 
     image = await image_repository.get(session, id=image_id)
 
