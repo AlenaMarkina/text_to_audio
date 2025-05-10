@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Any
+from uuid import UUID
 
-from sqlalchemy import DateTime, func, String
+from sqlalchemy import DateTime, func, text
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -10,13 +11,11 @@ from sqlalchemy.orm import (
     registry
 )
 
-from models.constance import ID_LEN
-
 mapper_registry = registry()
 
 
 class Base(DeclarativeBase):
-    id: Mapped[str] = mapped_column(String(ID_LEN), primary_key=True)
+    id: Mapped[UUID] = mapped_column(server_default=text("gen_random_uuid()"), primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), server_default=func.now(), onupdate=func.now()
