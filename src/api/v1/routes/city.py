@@ -20,7 +20,7 @@ async def retrieve_all(session: Session) -> list[CityRetrieveSchema]:
 
 
 @router.get("/{city_id}")
-async def retrieve(session: Session, city_id: UUID) -> CityRetrieveSchema:
+async def retrieve(session: Session, city_id: str) -> CityRetrieveSchema:
     """Получение информации о городе."""
 
     city = await city_repository.get(session, id=city_id)
@@ -48,7 +48,7 @@ async def create(session: Session, data: CityCreateSchema) -> CityRetrieveSchema
 
 
 @router.delete("/{city_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(session: Session, city_id: UUID) -> None:
+async def delete(session: Session, city_id: str) -> None:
     """Удаление города."""
 
     city = await city_repository.get(session, id=city_id)
@@ -63,7 +63,7 @@ async def delete(session: Session, city_id: UUID) -> None:
 async def update(
     session: Session,
     data: CityUpdateSchema,
-    city_id: UUID,
+    city_id: str,
 ) -> CityRetrieveSchema:
     """Изменение города."""
 

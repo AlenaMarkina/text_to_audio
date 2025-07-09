@@ -17,6 +17,6 @@ class CityUpdateSchema(CityBaseSchema):
 
 
 class CityRetrieveSchema(CityBaseSchema):
-    id: UUID
+    id: str
     created_at: datetime
     updated_at: datetime

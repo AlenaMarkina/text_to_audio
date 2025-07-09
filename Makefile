@@ -13,7 +13,7 @@ rename_image:
 	PYTHONPATH=src python ./src/commands/rename_image.py $(dir_name)
 
 tts:
-	PYTHONPATH=src python ./src/commands/text_to_audio.py $(file_name)
+	PYTHONPATH=src python ./src/commands/text_to_audio.py $(text_file_name)
 
 get_path:
 	PYTHONPATH=src python ./src/commands/get_file_path.py $(file_name)

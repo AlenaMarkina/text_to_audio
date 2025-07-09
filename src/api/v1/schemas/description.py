@@ -6,7 +6,7 @@ from api.v1.schemas.base import Base
 
 class DescriptionBaseSchema(Base):
     path: str
-    place_of_interest_id: UUID
+    place_of_interest_id: str
 
 
 class DescriptionCreateSchema(DescriptionBaseSchema):
@@ -18,6 +18,6 @@ class DescriptionUpdateSchema(DescriptionBaseSchema):
 
 
 class DescriptionRetrieveSchema(DescriptionBaseSchema):
-    id: UUID
+    id: str
     created_at: datetime
     updated_at: datetime

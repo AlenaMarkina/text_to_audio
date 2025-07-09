@@ -6,8 +6,8 @@ from api.v1.schemas.base import Base
 
 class AudioBaseSchema(Base):
     path: str
-    place_of_interest_id: UUID
-    description_id: UUID
+    place_of_interest_id: str
+    description_id: str
     lang: str
     gender: str
 
@@ -17,6 +17,6 @@ class AudioBaseSchema(Base):
 
 
 class AudioRetrieveSchema(AudioBaseSchema):
-    id: UUID
+    id: str
     created_at: datetime
     updated_at: datetime

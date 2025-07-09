@@ -46,7 +46,7 @@ class TextConvertor:
             )
 
     async def set_audiopath_from_textpath(self):
-        self.__audio_path = self.__text_path.replace('text/', 'audio/').replace('docx', 'mp3')
+        self.__audio_path = self.__text_path.replace('text/', 'audio/').replace('docx', 'wav')
         print(f'audio_path: {self.__audio_path}')
 
     async def convert_text_to_audio(self) -> bool:

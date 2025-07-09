@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -11,14 +12,21 @@ from sqlalchemy.orm import (
     registry
 )
 
+from settings.base import settings
+
 mapper_registry = registry()
 
 
 class Base(DeclarativeBase):
-    id: Mapped[UUID] = mapped_column(server_default=text("gen_random_uuid()"), primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.now())
+    # id: Mapped[UUID] = mapped_column(server_default=text("gen_random_uuid()"), primary_key=True)
+    # created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.now())
+    # updated_at: Mapped[datetime] = mapped_column(
+    #     DateTime(timezone=False), server_default=func.now(), onupdate=func.now()
+    # )
+    id: Mapped[str] = mapped_column(default=lambda: str(uuid.uuid4()), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=text("CURRENT_TIMESTAMP"))
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False), server_default=func.now(), onupdate=func.now()
+        DateTime(timezone=False), server_default=text("CURRENT_TIMESTAMP"), onupdate=text("CURRENT_TIMESTAMP")
     )
 
     @declared_attr.directive

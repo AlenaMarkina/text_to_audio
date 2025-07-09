@@ -6,7 +6,7 @@ from api.v1.schemas.base import Base
 
 class PlaceOfInterestBaseSchema(Base):
     name: str
-    city_id: UUID
+    city_id: str
 
 
 class PlaceOfInterestCreateSchema(PlaceOfInterestBaseSchema):
@@ -14,10 +14,11 @@ class PlaceOfInterestCreateSchema(PlaceOfInterestBaseSchema):
 
 
 class PlaceOfInterestUpdateSchema(PlaceOfInterestBaseSchema):
-    pass
+    lat: float | None
+    long: float | None
 
 
 class PlaceOfInterestRetrieveSchema(PlaceOfInterestBaseSchema):
-    id: UUID
+    id: str
     created_at: datetime
     updated_at: datetime

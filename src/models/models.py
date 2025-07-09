@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, UniqueConstraint
+from sqlalchemy import ForeignKey, String, Float, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -11,6 +11,8 @@ class PlaceOfInterest(Base):
     __table_args__ = (UniqueConstraint('city_id', 'name'), )
 
     name: Mapped[str] = mapped_column(String(), nullable=False)
+    lat: Mapped[float] = mapped_column(Float(), nullable=False)
+    long: Mapped[float] = mapped_column(Float(), nullable=False)
     city_id: Mapped[UUID] = mapped_column(ForeignKey('city.id'))
 
     images: Mapped[list['Image']] = relationship(back_populates='place_of_interest')

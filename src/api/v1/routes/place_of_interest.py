@@ -20,7 +20,7 @@ async def retrieve_all(session: Session) -> list[PlaceOfInterestRetrieveSchema]:
 
 
 @router.get("/{place_id}")
-async def retrieve(session: Session, place_id: UUID) -> PlaceOfInterestRetrieveSchema:
+async def retrieve(session: Session, place_id: str) -> PlaceOfInterestRetrieveSchema:
     """Получение информации о достопримечательности."""
 
     place_of_interest = await place_repository.get(session, id=place_id)
@@ -59,7 +59,7 @@ async def create(session: Session, data: PlaceOfInterestCreateSchema) -> PlaceOf
 
 
 @router.delete("/{place_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(session: Session, place_id: UUID) -> None:
+async def delete(session: Session, place_id: str) -> None:
     """Удаление достопримечательности."""
 
     place_of_interest = await place_repository.get(session, id=place_id)
@@ -74,7 +74,7 @@ async def delete(session: Session, place_id: UUID) -> None:
 async def update(
     session: Session,
     data: PlaceOfInterestUpdateSchema,
-    place_id: UUID,
+    place_id: str,
 ) -> PlaceOfInterestRetrieveSchema:
     """Изменение достопримечательности."""
 
@@ -83,6 +83,6 @@ async def update(
     if place_of_interest is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Place of interest not found")
 
-    data = {"name": data.name}
+    data = {"name": data.name, 'lat': data.lat, 'long': data.long}
 
     return await place_repository.update(session, place_of_interest, data=data)

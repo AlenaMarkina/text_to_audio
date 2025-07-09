@@ -21,7 +21,7 @@ async def retrieve_all(session: Session) -> list[DescriptionRetrieveSchema]:
 
 
 @router.get("/{desc_id}")
-async def retrieve(session: Session, desc_id: UUID) -> DescriptionRetrieveSchema:
+async def retrieve(session: Session, desc_id: str) -> DescriptionRetrieveSchema:
     """Получение информации об описании достопримечательности."""
 
     description = await desc_repository.get(session, id=desc_id)
@@ -74,7 +74,7 @@ async def create(session: Session, data: DescriptionCreateSchema) -> Description
 
 
 @router.delete("/{desc_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(session: Session, desc_id: UUID) -> None:
+async def delete(session: Session, desc_id: str) -> None:
     """Удаление описания достопримечательностям."""
 
     description = await desc_repository.get(session, id=desc_id)
@@ -86,7 +86,7 @@ async def delete(session: Session, desc_id: UUID) -> None:
 
 
 @router.put("/{desc_id}")
-async def update(session: Session, data: DescriptionUpdateSchema, desc_id: UUID) -> DescriptionRetrieveSchema:
+async def update(session: Session, data: DescriptionUpdateSchema, desc_id: str) -> DescriptionRetrieveSchema:
     """Изменение описания достопримечательности."""
 
     description = await desc_repository.get(session, id=desc_id)

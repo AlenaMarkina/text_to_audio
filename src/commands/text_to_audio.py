@@ -41,7 +41,7 @@ async def read_text_file(file_path) -> str:
 
 
 async def convert_to_audio(text, text_path):
-    audio_path = text_path.replace('text/', 'audio/').replace('docx', 'mp3')
+    audio_path = text_path.replace('text/', 'audio/').replace('docx', 'wav')
     voices = await VoicesManager.create()
     voice = voices.find(Gender='Male', Language='ru')
     communicate = edge_tts.Communicate(text, random.choice(voice)['Name'])
