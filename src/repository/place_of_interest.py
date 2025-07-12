@@ -1,9 +1,9 @@
-from models.models import PlaceOfInterest
+from models.models import Landmark
 from repository.base import SQLAlchemyRepository
 
 
-class PlaceOfInterestRepository(SQLAlchemyRepository[PlaceOfInterest]):
+class PlaceOfInterestRepository(SQLAlchemyRepository[Landmark]):
     pass
 
 
-place_repository = PlaceOfInterestRepository(PlaceOfInterest)
+place_repository = PlaceOfInterestRepository(Landmark)
