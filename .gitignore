@@ -179,7 +179,10 @@ cython_debug/
 *.db3
 
 # Static
-static/*
+static/audio/*
+static/images/*
+static/text/*
+
 !static/audio/.gitkeep
 !static/images/.gitkeep
 !static/text/.gitkeep
