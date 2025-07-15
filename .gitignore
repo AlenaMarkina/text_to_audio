@@ -177,3 +177,8 @@ cython_debug/
 .DS_Store
 
 *.db3
+
+# Static
+/static/audio/*
+/static/images/*
+/static/text/*
