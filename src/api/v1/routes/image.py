@@ -1,12 +1,11 @@
 from uuid import UUID
-from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
 
 from api.v1.deps.session import Session
 from api.v1.schemas.image import ImageCreateSchema, ImageRetrieveSchema, ImageUpdateSchema
 from repository.image import image_repository
-from repository.place_of_interest import place_repository
+from repository.landmark import landmark_repository
 
 router = APIRouter()
 
@@ -33,28 +32,24 @@ async def retrieve(session: Session, image_id: UUID) -> ImageRetrieveSchema:
 @router.post("/")
 async def create(session: Session, data: ImageCreateSchema) -> ImageRetrieveSchema:
     """Создание фотографии к достопримечательности."""
-    is_exist = await image_repository.exists(session, path=data.path)
 
-    if is_exist:
+    is_landmark_exist = await landmark_repository.exists(session, id=data.landmark_id)
+
+    if not is_landmark_exist:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Landmark with given id does not exist"
+        )
+
+    is_image_exist = await image_repository.exists(session, path=data.path)
+
+    if is_image_exist:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Image already exists"
         )
 
-    is_place_exist = await place_repository.exists(session, id=data.place_of_interest_id)
-
-    if not is_place_exist:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Place_of_interest with given id does not exist"
-        )
-
-    data = {
-        'place_of_interest_id': data.place_of_interest_id,
-        'path': data.path
-    }
-
-    return await image_repository.create(session, data=data)
+    return await image_repository.create(session, data=data.model_dump())
 
 
 @router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -78,6 +73,4 @@ async def update(session: Session, data: ImageUpdateSchema, image_id: UUID) -> I
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
 
-    data = {"path": data.path}
-
-    return await image_repository.update(session, image, data=data)
+    return await image_repository.update(session, image, data=data.model_dump())

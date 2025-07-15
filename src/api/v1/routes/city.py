@@ -1,13 +1,10 @@
-import asyncio
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy.orm import selectinload
 
 from api.v1.deps.session import Session
 from api.v1.schemas.city import CityCreateSchema, CityUpdateSchema, CityRetrieveSchema
 from repository.city import city_repository
-from models.models import City
 
 router = APIRouter()
 
@@ -34,6 +31,7 @@ async def retrieve(session: Session, city_id: UUID) -> CityRetrieveSchema:
 @router.post("/")
 async def create(session: Session, data: CityCreateSchema) -> CityRetrieveSchema:
     """Создание города."""
+
     is_exist = await city_repository.exists(session, name=data.name)
 
     if is_exist:
@@ -42,9 +40,7 @@ async def create(session: Session, data: CityCreateSchema) -> CityRetrieveSchema
             detail="City already exists"
         )
 
-    data = {'name': data.name}
-
-    return await city_repository.create(session, data=data)
+    return await city_repository.create(session, data=data.model_dump())
 
 
 @router.delete("/{city_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -72,6 +68,4 @@ async def update(
     if city is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="City not found")
 
-    data = {"name": data.name}
-
-    return await city_repository.update(session, city, data=data)
+    return await city_repository.update(session, city, data=data.model_dump())
