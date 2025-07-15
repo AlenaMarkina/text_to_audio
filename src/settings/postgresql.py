@@ -5,11 +5,12 @@ from settings.base import Settings
 
 
 class PostgreSQLSettings(Settings):
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: SecretStr
-    POSTGRES_HOST: str
-    POSTGRES_PORT: str
-    POSTGRES_DB: str
+    PG_USER: str
+    PG_PASSWORD: SecretStr
+    PG_HOST: str
+    PG_PORT: int
+    PG_DB: str
+    PG_SCHEMA: str
     DSN: str | None = None
 
     LOG_QUERIES: bool = False
@@ -18,14 +19,15 @@ class PostgreSQLSettings(Settings):
     @classmethod
     def assemble_dsn(cls, _: str | None, info: FieldValidationInfo) -> PostgresDsn:
         scheme = "postgresql+asyncpg"
-        user = info.data["POSTGRES_USER"]
-        password = info.data["POSTGRES_PASSWORD"].get_secret_value()
-        host = info.data["POSTGRES_HOST"]
-        port = info.data["POSTGRES_PORT"]
-        db = info.data["POSTGRES_DB"]
+        user = info.data["PG_USER"]
+        password = info.data["PG_PASSWORD"].get_secret_value()
+        host = info.data["PG_HOST"]
+        port = info.data["PG_PORT"]
+        db = info.data["PG_DB"]
 
         url = f"{scheme}://{user}:{password}@{host}:{port}/{db}"
         return PostgresDsn(url).unicode_string()
 
 
 settings = PostgreSQLSettings()
+

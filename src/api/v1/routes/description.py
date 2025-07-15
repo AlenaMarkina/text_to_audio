@@ -6,7 +6,7 @@ from api.v1.deps.session import Session
 from api.v1.schemas.description import (
     DescriptionCreateSchema, DescriptionUpdateSchema, DescriptionRetrieveSchema)
 from repository.description import desc_repository
-from repository.place_of_interest import place_repository
+from repository.landmark import landmark_repository
 from repository.audio import audio_repository
 from services.convert_text_to_audio import TextConvertor
 
@@ -43,7 +43,7 @@ async def create(session: Session, data: DescriptionCreateSchema) -> Description
     if is_exist:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Description already exists")
 
-    is_place_exist = await place_repository.exists(session, id=data.place_of_interest_id)
+    is_place_exist = await landmark_repository.exists(session, id=data.place_of_interest_id)
 
     if not is_place_exist:
         raise HTTPException(

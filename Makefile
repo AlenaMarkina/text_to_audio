@@ -9,6 +9,9 @@ upgrade:
 downgrade:
 	PYTHONPATH=src alembic downgrade -1
 
+stamp:
+	PYTHONPATH=src alembic stamp head
+
 rename_image:
 	PYTHONPATH=src python ./src/commands/rename_image.py $(dir_name)
 
