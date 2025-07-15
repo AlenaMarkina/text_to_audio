@@ -5,8 +5,8 @@ from api.v1.schemas.base import Base
 
 
 class ImageBaseSchema(Base):
+    landmark_id: UUID
     path: str
-    place_of_interest_id: UUID
 
 
 class ImageCreateSchema(ImageBaseSchema):

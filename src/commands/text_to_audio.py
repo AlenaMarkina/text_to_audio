@@ -6,14 +6,10 @@ import random
 
 import edge_tts
 from edge_tts import VoicesManager
-from playsound3 import playsound
-from docx import Document
-
 
 file = sys.argv[1] if len(sys.argv) else None
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent  # /Users/alena/PycharmProjects/text_to_audio
-
 print(1111, ROOT_DIR)
 
 
@@ -27,13 +23,19 @@ async def get_file_path(start_folder_path, file_name):
 
 
 async def read_text_file(file_path) -> str:
+    print('\nin read_text_file()')
     ext = os.path.splitext(file_path)[1].lower()
     print(2222, ext)
 
-    if ext == '.docx':
-        doc = Document(file_path)
-        text = "\n".join([para.text for para in doc.paragraphs])
-        # print(44444, text)
+    # if ext == '.docx':
+    #     doc = Document(file_path)
+    #     text = "\n".join([para.text for para in doc.paragraphs])
+    #     # print(44444, text)
+    if ext == '.txt':
+        with open(file_path) as f:
+            text = f.read()
+            print(type(text))
+            print(f'text: {text}')
     else:
         raise ValueError(f"Unsupported file type: {ext}")
 
@@ -41,7 +43,7 @@ async def read_text_file(file_path) -> str:
 
 
 async def convert_to_audio(text, text_path):
-    audio_path = text_path.replace('text/', 'audio/').replace('docx', 'mp3')
+    audio_path = text_path.replace('text/', 'audio/').replace('txt', 'mp3')
     voices = await VoicesManager.create()
     voice = voices.find(Gender='Male', Language='ru')
     communicate = edge_tts.Communicate(text, random.choice(voice)['Name'])
