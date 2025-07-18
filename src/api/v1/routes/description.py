@@ -57,7 +57,7 @@ async def create(session: Session, data: DescriptionCreateSchema) -> Description
     }
     desc = await desc_repository.create(session, data=desc_data)
 
-    convertor = TextConvertor(text_path=desc.path)
+    convertor = TextConvertor(text_path=desc.image_path)
     await convertor.init_voice()
     await convertor.set_audiopath_from_textpath()
     await convertor.read_text_file()

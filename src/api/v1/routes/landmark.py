@@ -41,7 +41,11 @@ async def create(session: Session, data: LandmarkCreateSchema) -> LandmarkRetrie
             detail="City with given id does not exist"
         )
 
-    is_landmark_exist = await landmark_repository.exists(session, city_id=data.city_id, name=data.name)
+    is_landmark_exist = await landmark_repository.exists(
+        session,
+        city_id=data.city_id,
+        landmark_name_en=data.landmark_name_en
+    )
 
     if is_landmark_exist:
         raise HTTPException(

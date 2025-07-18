@@ -5,8 +5,8 @@ from api.v1.schemas.base import Base
 
 
 class DescriptionBaseSchema(Base):
-    path: str
-    place_of_interest_id: UUID
+    landmark_id: UUID
+    desc_path: str
 
 
 class DescriptionCreateSchema(DescriptionBaseSchema):
