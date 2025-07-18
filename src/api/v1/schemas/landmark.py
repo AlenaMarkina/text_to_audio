@@ -6,7 +6,8 @@ from api.v1.schemas.base import Base
 
 class LandmarkBaseSchema(Base):
     city_id: UUID
-    name: str
+    landmark_name_en: str
+    landmark_name_ru: str
     lat: float
     long: float
 

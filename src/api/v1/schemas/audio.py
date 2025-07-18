@@ -2,14 +2,16 @@ from datetime import datetime
 from uuid import UUID
 
 from api.v1.schemas.base import Base
+from models.constance import Language, Voiceover
 
 
 class AudioBaseSchema(Base):
-    path: str
-    place_of_interest_id: UUID
-    description_id: UUID
-    lang: str
-    gender: str
+    landmark_id: UUID
+    desc_id: UUID
+    audio_path: str
+    duration_sec: int
+    language: Language
+    voice_gender: Voiceover
 
 
 # class AudioUpdateSchema(AudioBaseSchema):
