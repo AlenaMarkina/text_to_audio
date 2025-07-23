@@ -74,7 +74,6 @@ class Audio(BaseClass):
         self.language = 'ru'
         self.voice_gender = 'Male'
         self.file_extension = 'mp3'
-        self.duration_sec = 3
 
     def set_audio_info(self): pass
 
