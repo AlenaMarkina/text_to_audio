@@ -9,8 +9,9 @@ from edge_tts import VoicesManager
 
 file = sys.argv[1] if len(sys.argv) else None
 
-ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent  # /Users/alena/PycharmProjects/text_to_audio
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent.parent.parent  # /Users/alena/PycharmProjects/text_to_audio
 print(1111, ROOT_DIR)
+print(2222, file)
 
 
 async def get_file_path(start_folder_path, file_name):
@@ -51,9 +52,34 @@ async def convert_to_audio(text, text_path):
 
 
 async def main():
-    file_path = await get_file_path(ROOT_DIR, file)
-    text = await read_text_file(file_path)
-    await convert_to_audio(text, file_path)
+    # file_path = await get_file_path(ROOT_DIR, file)
+    # text = await read_text_file(file_path)
+    # await convert_to_audio(text, file_path)
 
+    file_path = await get_file_path(ROOT_DIR, file)
+    print(file_path)
+
+    text = ''
+
+    with open(file_path) as f:
+        # for line in f:
+        #     print('------RAW LINE----------------------------------')
+        #     print(f'{line!r}')
+        #     print('------STRIP LINE----------------------------------')
+        #     l = line.replace('\xa0', ' ').strip()
+        #     print(f'{l!r}')
+
+        t = f.read()
+        print(f'{t!r}')
+        # t = t.replace('"', '\'').strip().splitlines()
+        # print(t)
+        # t = ' '.join(t)
+        # print()
+        # print(222222222222222222)
+        # print(f'{t}')
+
+
+    # text = text.split('\n')
+    # print(text)
 
 asyncio.run(main())
