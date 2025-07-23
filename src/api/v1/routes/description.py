@@ -9,7 +9,6 @@ from api.v1.schemas.description import (
 from repository.description import desc_repository
 from repository.landmark import landmark_repository
 from repository.audio import audio_repository
-from services.convert_text_to_audio import TextConvertor
 from services.description_service import TextToAudioService
 
 router = APIRouter()
@@ -81,7 +80,6 @@ async def create(session: Session, data: DescriptionCreateSchema):
         'landmark_id': data.landmark_id,
         'desc_id': desc.id,
         'audio_path': tts.audio.rel_path,
-        'duration_sec': tts.audio.duration_sec
     }
     await audio_repository.create(session, data=audio_data)
     print(f'AUDIO CREATED ID')

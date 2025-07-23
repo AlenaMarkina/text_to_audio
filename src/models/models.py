@@ -64,7 +64,6 @@ class Audio(Base):
     landmark_id: Mapped[UUID] = mapped_column(ForeignKey(f'{schema}.landmarks.id'), nullable=False)
     desc_id: Mapped[UUID] = mapped_column(ForeignKey(f'{schema}.descriptions.id'), unique=True, nullable=False)
     audio_path: Mapped[str] = mapped_column(String(), nullable=False, unique=True)
-    duration_sec: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     language: Mapped[str] = mapped_column(String(LANGUAGE), server_default=Language.RU.value, nullable=False)
     voiceover: Mapped[str] = mapped_column(String(GENDER), server_default=Voiceover.MALE.value, nullable=False)
 
